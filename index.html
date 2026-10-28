@@ -342,9 +342,14 @@
                         <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Sesi 1</span>
                     </div>
                     <h3 class="text-lg font-bold text-slate-900">Sesi Pagi</h3>
-                    <p class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-2 font-mono">07:00 <span class="text-lg font-normal text-slate-400">-</span> 12:00</p>
-                    <div class="mt-3 p-2 rounded-lg bg-amber-100/70 border border-amber-200 text-[11px] text-amber-900 font-medium">
-                        ✨ <strong>Khusus Hari Jum'at:</strong> 07:00 - 10:30 WIB (Persiapan Ibadah Shalat Jum'at)
+                    <p class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-2 font-mono">07:00 <span class="text-lg font-normal text-slate-400">-</span> <span id="shift-1-display-end">Dzuhur</span></p>
+                    <div class="mt-3 space-y-1.5 text-[11px]">
+                        <div class="p-2 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-900 font-medium">
+                            🕌 <strong>Selesai Pas Adzan Dzuhur:</strong> Tutup pukul <span id="shift-1-dzuhur-clock" class="font-bold font-mono text-emerald-800">11:27</span> WIB
+                        </div>
+                        <div class="p-1.5 rounded-lg bg-amber-100/70 border border-amber-200 text-amber-900 font-medium">
+                            ✨ <strong>Khusus Jum'at:</strong> 07:00 - 10:30 WIB (Persiapan Shalat Jum'at)
+                        </div>
                     </div>
                     <p class="text-xs text-slate-500 mt-2.5">Cocok untuk print tugas mendadak, fotocopy berkas kantor, dan setting banner pagi hari.</p>
                 </div>
@@ -360,8 +365,13 @@
                     </div>
                     <h3 class="text-lg font-bold text-slate-900">Sesi Siang & Sore</h3>
                     <p class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-2 font-mono">14:00 <span class="text-lg font-normal text-slate-400">-</span> 17:00</p>
-                    <div class="mt-3 p-2 rounded-lg bg-emerald-50 border border-emerald-200 text-[11px] text-emerald-800 font-medium">
-                        ✅ <strong>Buka Setiap Hari:</strong> Termasuk Senin & Jum'at tetap buka pukul 14:00 - 17:00 WIB
+                    <div class="mt-3 space-y-1.5 text-[11px]">
+                        <div class="p-2 rounded-lg bg-amber-50 border border-amber-200 text-amber-900 font-medium">
+                            🕌 <strong>Jeda Sholat Ashar ~20 Mnt:</strong> Istirahat pukul <span id="shift-2-ashar-clock" class="font-bold font-mono text-amber-800">14:43</span> - <span id="shift-2-ashar-end-clock" class="font-bold font-mono text-amber-800">15:03</span> WIB
+                        </div>
+                        <div class="p-1.5 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-800 font-medium">
+                            ✅ <strong>Buka Setiap Hari:</strong> Termasuk Senin & Jum'at tetap buka pukul 14:00 - 17:00 WIB
+                        </div>
                     </div>
                     <p class="text-xs text-slate-500 mt-2.5">Waktu ideal untuk proses cetak skala besar, laminating dokumen, dan konsultasi cetak undangan.</p>
                 </div>
@@ -378,6 +388,9 @@
                     <h3 class="text-lg font-bold text-slate-900">Sesi Malam</h3>
                     <p class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-2 font-mono">19:00 <span class="text-lg font-normal text-slate-400">-</span> 21:30</p>
                     <div class="mt-3 space-y-1.5 text-[11px]">
+                        <div class="p-1.5 rounded-lg bg-slate-100 border border-slate-200 text-slate-700 font-medium">
+                            ⭐ <strong>Waktu Buka:</strong> Dimulai setelah waktu Maghrib & Isya selesai
+                        </div>
                         <div class="p-1.5 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-900 font-medium">
                             🌙 <strong>Khusus Jum'at:</strong> <span class="font-bold text-emerald-700">TETAP BUKA</span> (19:00 - 21:00 WIB)
                         </div>
@@ -389,30 +402,107 @@
                 </div>
             </div>
 
+            <!-- Widget Jadwal Sholat Harian (Kecamatan Matan Hilir Selatan) -->
+            <div id="prayer-widget" class="mt-8 rounded-3xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 border border-slate-700/80 p-6 sm:p-7 text-white shadow-xl relative overflow-hidden">
+                <div class="absolute -top-16 -right-16 w-64 h-64 bg-cyan-500/10 rounded-full blur-2xl pointer-events-none"></div>
+                
+                <div class="flex flex-col md:flex-row md:items-center justify-between pb-5 border-b border-slate-700/80 gap-3">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center text-white shadow-md">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <h3 class="font-extrabold text-base text-white">Jadwal Sholat Hari Ini</h3>
+                                <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Otomatis Ter-update</span>
+                            </div>
+                            <p class="text-xs text-slate-300 mt-0.5">
+                                Kecamatan Matan Hilir Selatan, Ketapang (WIB / GMT+7) • <span id="prayer-today-date" class="font-medium text-cyan-300"></span>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 text-xs">
+                        <a href="https://jadwalsholat.web.id/jadwal-sholat/kec/matan-hilir-selatan-166/" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-600 transition-colors inline-flex items-center gap-1.5 text-[11px]">
+                            <span>Rujukan: jadwalsholat.web.id</span>
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Grid Waktu Sholat -->
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3 mt-5 text-center">
+                    <!-- Subuh -->
+                    <div id="prayer-card-fajr" class="p-3.5 rounded-2xl bg-slate-800/80 border border-slate-700 transition-all">
+                        <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block">Subuh</span>
+                        <span id="prayer-time-fajr" class="text-xl sm:text-2xl font-black font-mono text-white mt-1 block">--:--</span>
+                        <span class="text-[10px] text-slate-400 mt-0.5 block">Imsak: <span id="prayer-time-imsak">--:--</span></span>
+                    </div>
+                    <!-- Terbit -->
+                    <div id="prayer-card-sunrise" class="p-3.5 rounded-2xl bg-slate-800/80 border border-slate-700 transition-all">
+                        <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block">Terbit</span>
+                        <span id="prayer-time-sunrise" class="text-xl sm:text-2xl font-black font-mono text-white mt-1 block">--:--</span>
+                        <span class="text-[10px] text-slate-400 mt-0.5 block">Pagi hari</span>
+                    </div>
+                    <!-- Dzuhur -->
+                    <div id="prayer-card-dhuhr" class="p-3.5 rounded-2xl bg-slate-800/80 border border-slate-700 transition-all relative">
+                        <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block">Dzuhur</span>
+                        <span id="prayer-time-dhuhr" class="text-xl sm:text-2xl font-black font-mono text-cyan-300 mt-1 block">--:--</span>
+                        <span class="inline-block mt-0.5 px-1.5 py-0.5 rounded text-[9px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">Batas Sesi 1</span>
+                    </div>
+                    <!-- Ashar -->
+                    <div id="prayer-card-asr" class="p-3.5 rounded-2xl bg-slate-800/80 border border-slate-700 transition-all relative">
+                        <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block">Ashar</span>
+                        <span id="prayer-time-asr" class="text-xl sm:text-2xl font-black font-mono text-cyan-300 mt-1 block">--:--</span>
+                        <span class="inline-block mt-0.5 px-1.5 py-0.5 rounded text-[9px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">Jeda 20 Mnt</span>
+                    </div>
+                    <!-- Maghrib -->
+                    <div id="prayer-card-maghrib" class="p-3.5 rounded-2xl bg-slate-800/80 border border-slate-700 transition-all">
+                        <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block">Maghrib</span>
+                        <span id="prayer-time-maghrib" class="text-xl sm:text-2xl font-black font-mono text-white mt-1 block">--:--</span>
+                        <span class="text-[10px] text-slate-400 mt-0.5 block">Istirahat Sore</span>
+                    </div>
+                    <!-- Isya -->
+                    <div id="prayer-card-isha" class="p-3.5 rounded-2xl bg-slate-800/80 border border-slate-700 transition-all">
+                        <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block">Isya</span>
+                        <span id="prayer-time-isha" class="text-xl sm:text-2xl font-black font-mono text-white mt-1 block">--:--</span>
+                        <span class="text-[10px] text-slate-400 mt-0.5 block">Jelang Sesi 3</span>
+                    </div>
+                </div>
+
+                <!-- Keterangan Operasional Sholat -->
+                <div class="mt-4 pt-3 border-t border-slate-700/60 flex flex-wrap items-center justify-between text-xs text-slate-300 gap-2">
+                    <p class="flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                        <span>Sesi Pagi selesai tepat saat adzan Dzuhur. Saat adzan Ashar pelayanan jeda sekitar 15–20 menit untuk menunaikan sholat.</span>
+                    </p>
+                    <span class="text-[11px] text-slate-400 font-mono">Metode Hisab: Kemenag RI (Kec. Matan Hilir Selatan)</span>
+                </div>
+            </div>
+
             <!-- Tabel Rangkuman Jadwal Mingguan -->
             <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 text-xs">
                     <p class="font-bold text-slate-900 flex items-center gap-1.5 mb-1.5">
                         <span class="w-2 h-2 rounded-full bg-blue-500"></span> Selasa, Rabu, Kamis, Sabtu & Minggu:
                     </p>
-                    <p class="text-slate-600 font-mono">• Pagi : 07:00 - 12:00 WIB</p>
-                    <p class="text-slate-600 font-mono">• Siang : 14:00 - 17:00 WIB</p>
-                    <p class="text-slate-600 font-mono">• Malam : 19:00 - 21:30 WIB</p>
+                    <p class="text-slate-600 font-mono">• Pagi : 07:00 - Pas Adzan Dzuhur</p>
+                    <p class="text-slate-600 font-mono">• Siang : 14:00 - 17:00 WIB (Jeda Ashar 20 Mnt)</p>
+                    <p class="text-slate-600 font-mono">• Malam : 19:00 - 21:30 WIB (Setelah Isya)</p>
                 </div>
                 <div class="p-4 rounded-2xl bg-amber-50/70 border border-amber-200 text-xs">
                     <p class="font-bold text-amber-900 flex items-center gap-1.5 mb-1.5">
                         <span class="w-2 h-2 rounded-full bg-amber-500"></span> Khusus Hari Jum'at (Tetap Buka 3 Sesi):
                     </p>
-                    <p class="text-amber-800 font-mono">• Pagi : 07:00 - 10:30 WIB</p>
-                    <p class="text-amber-800 font-mono">• Siang : 14:00 - 17:00 WIB</p>
+                    <p class="text-amber-800 font-mono">• Pagi : 07:00 - 10:30 WIB (Shalat Jum'at)</p>
+                    <p class="text-amber-800 font-mono">• Siang : 14:00 - 17:00 WIB (Jeda Ashar 20 Mnt)</p>
                     <p class="text-emerald-700 font-bold font-mono">• Malam : 19:00 - 21:00 WIB (Tetap Buka)</p>
                 </div>
                 <div class="p-4 rounded-2xl bg-blue-50/70 border border-blue-200 text-xs">
                     <p class="font-bold text-blue-900 flex items-center gap-1.5 mb-1.5">
                         <span class="w-2 h-2 rounded-full bg-blue-600"></span> Khusus Hari Senin (Hanya Malam Tutup):
                     </p>
-                    <p class="text-blue-800 font-mono">• Pagi : 07:00 - 12:00 WIB</p>
-                    <p class="text-blue-800 font-mono">• Siang : 14:00 - 17:00 WIB</p>
+                    <p class="text-blue-800 font-mono">• Pagi : 07:00 - Pas Adzan Dzuhur</p>
+                    <p class="text-blue-800 font-mono">• Siang : 14:00 - 17:00 WIB (Jeda Ashar 20 Mnt)</p>
                     <p class="text-rose-600 font-semibold font-mono">• Malam : TUTUP</p>
                 </div>
             </div>
@@ -1178,11 +1268,161 @@
         });
 
         /**
+         * PrayTimes.js: Prayer Times Calculator (ver 2.3)
+         * Copyright (C) 2007-2011 PrayTimes.org (GNU LGPL v3.0)
+         * Sesuai rujukan: https://jadwalsholat.web.id/jadwal-sholat/kec/matan-hilir-selatan-166/
+         */
+        const DMath = {
+            dtr: function(t) { return t * Math.PI / 180; },
+            rtd: function(t) { return 180 * t / Math.PI; },
+            sin: function(t) { return Math.sin(this.dtr(t)); },
+            cos: function(t) { return Math.cos(this.dtr(t)); },
+            tan: function(t) { return Math.tan(this.dtr(t)); },
+            arcsin: function(t) { return this.rtd(Math.asin(t)); },
+            arccos: function(t) { return this.rtd(Math.acos(t)); },
+            arctan: function(t) { return this.rtd(Math.atan(t)); },
+            arccot: function(t) { return this.rtd(Math.atan(1 / t)); },
+            arctan2: function(t, i) { return this.rtd(Math.atan2(t, i)); },
+            fixAngle: function(t) { return this.fix(t, 360); },
+            fixHour: function(t) { return this.fix(t, 24); },
+            fix: function(t, i) { return (t -= i * Math.floor(t / i)) < 0 ? t + i : t; }
+        };
+
+        const PrayTimes = function(t) {
+            var i, a, n, r, s, e = {
+                MWL: { name: "Muslim World League", params: { fajr: 18, isha: 17 } },
+                ISNA: { name: "Islamic Society of North America (ISNA)", params: { fajr: 15, isha: 15 } },
+                Egypt: { name: "Egyptian General Authority of Survey", params: { fajr: 19.5, isha: 17.5 } },
+                Makkah: { name: "Umm Al-Qura University, Makkah", params: { fajr: 18.5, isha: "90 min" } },
+                Karachi: { name: "University of Islamic Sciences, Karachi", params: { fajr: 18, isha: 18 } },
+                Tehran: { name: "Institute of Geophysics, University of Tehran", params: { fajr: 17.7, isha: 14, maghrib: 4.5, midnight: "Jafari" } },
+                Jafari: { name: "Shia Ithna-Ashari, Leva Institute, Qum", params: { fajr: 16, isha: 14, maghrib: 4, midnight: "Jafari" } },
+                KEMENAGRI: { name: "Ditjen Bimas Islam, KEMENAG RI", params: { fajr: 19.5, dhuhr: 4, maghrib: 1.6, asr: 1.03, isha: 18.5 } }
+            },
+            h = "KEMENAGRI",
+            u = { imsak: "10 min", dhuhr: "0 min", asr: "Standard", highLats: "NightMiddle" },
+            o = "24h",
+            f = ["am", "pm"],
+            m = {},
+            c = { maghrib: "0 min", midnight: "Standard" };
+
+            for (var g in e) {
+                var d = e[g].params;
+                for (var M in c) void 0 === d[M] && (d[M] = c[M]);
+            }
+            d = e[h = e[t] ? t : h].params;
+            for (var l in d) u[l] = d[l];
+            for (var g in { imsak: "Imsak", fajr: "Shubuh", sunrise: "Sunrise", dhuhr: "Dhuhr", asr: "Asr", sunset: "Sunset", maghrib: "Maghrib", isha: "Isha", midnight: "Midnight" }) m[g] = 0;
+
+            return {
+                setMethod: function(t) { e[t] && (this.adjust(e[t].params), h = t); },
+                adjust: function(t) { for (var i in t) u[i] = t[i]; },
+                tune: function(t) { for (var i in t) m[i] = t[i]; },
+                getTimes: function(t, e, h, u, f) {
+                    return i = 1 * e[0], a = 1 * e[1], n = e[2] ? 1 * e[2] : 0, o = f || o,
+                    t.constructor === Date && (t = [t.getFullYear(), t.getMonth() + 1, t.getDate()]),
+                    void 0 !== h && "auto" != h || (h = this.getTimeZone(t)),
+                    void 0 !== u && "auto" != u || (u = this.getDst(t)),
+                    r = 1 * h + (1 * u ? 1 : 0), s = this.julian(t[0], t[1], t[2]) - a / 360, this.computeTimes();
+                },
+                getFormattedTime: function(t, i, a) {
+                    if (isNaN(t)) return "-----";
+                    if ("Float" == i) return t;
+                    a = a || f, t = DMath.fixHour(t + .5 / 60);
+                    var n = Math.floor(t), r = Math.floor(60 * (t - n)), s = "12h" == i ? a[n < 12 ? 0 : 1] : "";
+                    return ("24h" == i ? this.twoDigitsFormat(n) : (n + 12 - 1) % 12 + 1) + ":" + this.twoDigitsFormat(r) + (s ? " " + s : "");
+                },
+                midDay: function(t) { var i = this.sunPosition(s + t).equation; return DMath.fixHour(12 - i); },
+                sunAngleTime: function(t, a, n) {
+                    var r = this.sunPosition(s + a).declination, e = this.midDay(a),
+                    h = 1 / 15 * DMath.arccos((-DMath.sin(t) - DMath.sin(r) * DMath.sin(i)) / (DMath.cos(r) * DMath.cos(i)));
+                    return e + ("ccw" == n ? -h : h);
+                },
+                asrTime: function(t, a) {
+                    var n = this.sunPosition(s + a).declination, r = -DMath.arccot(t + DMath.tan(Math.abs(i - n)));
+                    return this.sunAngleTime(r, a);
+                },
+                sunPosition: function(t) {
+                    var i = t - 2451545, a = DMath.fixAngle(357.529 + .98560028 * i),
+                    n = DMath.fixAngle(280.459 + .98564736 * i),
+                    r = DMath.fixAngle(n + 1.915 * DMath.sin(a) + .02 * DMath.sin(2 * a)),
+                    s = 23.439 - 3.6e-7 * i,
+                    e = DMath.arctan2(DMath.cos(s) * DMath.sin(r), DMath.cos(r)) / 15,
+                    h = n / 15 - DMath.fixHour(e);
+                    return { declination: DMath.arcsin(DMath.sin(s) * DMath.sin(r)), equation: h };
+                },
+                julian: function(t, i, a) {
+                    i <= 2 && (t -= 1, i += 12);
+                    var n = Math.floor(t / 100), r = 2 - n + Math.floor(n / 4);
+                    return Math.floor(365.25 * (t + 4716)) + Math.floor(30.6001 * (i + 1)) + a + r - 1524.5;
+                },
+                computePrayerTimes: function(t) {
+                    t = this.dayPortion(t);
+                    var i = u;
+                    return {
+                        imsak: this.sunAngleTime(this.eval(i.imsak), t.imsak, "ccw"),
+                        fajr: this.sunAngleTime(this.eval(i.fajr), t.fajr, "ccw"),
+                        sunrise: this.sunAngleTime(this.riseSetAngle(), t.sunrise, "ccw"),
+                        dhuhr: this.midDay(t.dhuhr),
+                        asr: this.asrTime(this.asrFactor(i.asr), t.asr),
+                        sunset: this.sunAngleTime(this.riseSetAngle(), t.sunset),
+                        maghrib: this.sunAngleTime(this.eval(i.maghrib), t.maghrib),
+                        isha: this.sunAngleTime(this.eval(i.isha), t.isha)
+                    };
+                },
+                computeTimes: function() {
+                    for (var t = { imsak: 5, fajr: 5, sunrise: 6, dhuhr: 12, asr: 13, sunset: 18, maghrib: 18, isha: 18 }, i = 1; i <= 1; i++) t = this.computePrayerTimes(t);
+                    return (t = this.adjustTimes(t)).midnight = "Jafari" == u.midnight ? t.sunset + this.timeDiff(t.sunset, t.fajr) / 2 : t.sunset + this.timeDiff(t.sunset, t.sunrise) / 2,
+                    t = this.tuneTimes(t), this.modifyFormats(t);
+                },
+                adjustTimes: function(t) {
+                    var i = u;
+                    for (var n in t) t[n] += r - a / 15;
+                    return this.isMin(i.imsak) && (t.imsak = t.fajr - this.eval(i.imsak) / 60),
+                    this.isMin(i.maghrib) && (t.maghrib = t.sunset + this.eval(i.maghrib) / 60),
+                    this.isMin(i.isha) && (t.isha = t.maghrib + this.eval(i.isha) / 60),
+                    t.dhuhr += this.eval(i.dhuhr) / 60, t;
+                },
+                asrFactor: function(t) { return { Standard: 1, Hanafi: 2 }[t] || this.eval(t); },
+                riseSetAngle: function() { return .833 + .0347 * Math.sqrt(n); },
+                tuneTimes: function(t) { for (var i in t) t[i] += m[i] / 60; return t; },
+                modifyFormats: function(t) { for (var i in t) t[i] = this.getFormattedTime(t[i], o); return t; },
+                dayPortion: function(t) { for (var i in t) t[i] /= 24; return t; },
+                getTimeZone: function(t) { return 7; },
+                getDst: function(t) { return 0; },
+                eval: function(t) { return 1 * (t + "").split(/[^0-9.+-]/)[0]; },
+                isMin: function(t) { return -1 != (t + "").indexOf("min"); },
+                timeDiff: function(t, i) { return DMath.fixHour(i - t); },
+                twoDigitsFormat: function(t) { return t < 10 ? "0" + t : t; }
+            };
+        };
+
+        const prayTimesInstance = new PrayTimes('KEMENAGRI');
+        // Koordinat Matan Hilir Selatan, Ketapang (sesuai jadwalsholat.web.id/jadwal-sholat/kec/matan-hilir-selatan-166/)
+        const PRAYER_COORDS = [-2.086544, 110.2355647];
+        const PRAYER_TZ = 7;
+
+        function timeStringToDec(str) {
+            if (!str) return 0;
+            const parts = str.split(':').map(Number);
+            return parts[0] + (parts[1] / 60);
+        }
+
+        function addMinutes(timeStr, mins) {
+            if (!timeStr) return '--:--';
+            const parts = timeStr.split(':').map(Number);
+            const totalMins = parts[0] * 60 + parts[1] + mins;
+            const newH = Math.floor(totalMins / 60) % 24;
+            const newM = totalMins % 60;
+            return String(newH).padStart(2, '0') + ':' + String(newM).padStart(2, '0');
+        }
+
+        /**
          * Real-time Check for amdev digital Operating Hours (WIB / GMT+7)
-         * Operating Schedule Rules:
-         * - General Days (Tue, Wed, Thu, Sat, Sun): 07:00-12:00, 14:00-17:00, 19:00-21:30
-         * - Friday (Jum'at): 07:00-10:30, 14:00-17:00, 19:00-21:00
-         * - Monday (Senin): 07:00-12:00, 14:00-17:00, Night Closed (Tutup)
+         * Mengintegrasikan Jadwal Sholat Kemenag RI Kec. Matan Hilir Selatan:
+         * - Sesi 1 (Pagi): 07:00 s/d Adzan Dzuhur (Jum'at tutup 10:30 WIB)
+         * - Sesi 2 (Siang): 14:00 s/d 17:00 WIB (Jeda sholat Ashar ~20 menit)
+         * - Sesi 3 (Malam): 19:00 s/d 21:30 WIB (Setelah Isya. Jum'at s/d 21:00, Senin malam tutup)
          */
         function getWIBTime() {
             const now = new Date();
@@ -1200,83 +1440,181 @@
             const day = jakartaDate.getDay();
             const hours = parseInt(parts.hour, 10);
             const minutes = parseInt(parts.minute, 10);
-            return { day, hours, minutes, currentTimeDec: hours + (minutes / 60) };
+            return { now, jakartaDate, day, hours, minutes, currentTimeDec: hours + (minutes / 60) };
+        }
+
+        function updatePrayerWidget(times, currentTimeDec, jakartaDate) {
+            // Tampilkan tanggal hari ini dalam format Bahasa Indonesia
+            const dateOptions = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Asia/Jakarta' };
+            const formattedDate = new Intl.DateTimeFormat('id-ID', dateOptions).format(jakartaDate);
+            const dateEl = document.getElementById('prayer-today-date');
+            if (dateEl) dateEl.textContent = formattedDate;
+
+            // Update jam sholat di widget
+            const timeFields = {
+                'prayer-time-imsak': times.imsak,
+                'prayer-time-fajr': times.fajr,
+                'prayer-time-sunrise': times.sunrise,
+                'prayer-time-dhuhr': times.dhuhr,
+                'prayer-time-asr': times.asr,
+                'prayer-time-maghrib': times.maghrib,
+                'prayer-time-isha': times.isha
+            };
+            for (const [id, val] of Object.entries(timeFields)) {
+                const el = document.getElementById(id);
+                if (el) el.textContent = val;
+            }
+
+            // Update jam di shift cards
+            const dzuhurClock = document.getElementById('shift-1-dzuhur-clock');
+            if (dzuhurClock) dzuhurClock.textContent = times.dhuhr;
+
+            const asharClock = document.getElementById('shift-2-ashar-clock');
+            if (asharClock) asharClock.textContent = times.asr;
+
+            const asharEndClock = document.getElementById('shift-2-ashar-end-clock');
+            if (asharEndClock) asharEndClock.textContent = addMinutes(times.asr, 20);
+
+            // Highlight waktu sholat yang sedang aktif / berikutnya
+            const fajrDec = timeStringToDec(times.fajr);
+            const sunriseDec = timeStringToDec(times.sunrise);
+            const dhuhrDec = timeStringToDec(times.dhuhr);
+            const asrDec = timeStringToDec(times.asr);
+            const maghribDec = timeStringToDec(times.maghrib);
+            const ishaDec = timeStringToDec(times.isha);
+
+            let activeCardId = 'prayer-card-fajr';
+            if (currentTimeDec >= fajrDec && currentTimeDec < sunriseDec) activeCardId = 'prayer-card-fajr';
+            else if (currentTimeDec >= sunriseDec && currentTimeDec < dhuhrDec) activeCardId = 'prayer-card-dhuhr';
+            else if (currentTimeDec >= dhuhrDec && currentTimeDec < asrDec) activeCardId = 'prayer-card-asr';
+            else if (currentTimeDec >= asrDec && currentTimeDec < maghribDec) activeCardId = 'prayer-card-maghrib';
+            else if (currentTimeDec >= maghribDec && currentTimeDec < ishaDec) activeCardId = 'prayer-card-isha';
+            else activeCardId = 'prayer-card-fajr';
+
+            ['prayer-card-fajr', 'prayer-card-sunrise', 'prayer-card-dhuhr', 'prayer-card-asr', 'prayer-card-maghrib', 'prayer-card-isha'].forEach(cardId => {
+                const el = document.getElementById(cardId);
+                if (el) {
+                    if (cardId === activeCardId) {
+                        el.classList.add('ring-2', 'ring-cyan-400', 'bg-slate-700/90');
+                        el.classList.remove('bg-slate-800/80');
+                    } else {
+                        el.classList.remove('ring-2', 'ring-cyan-400', 'bg-slate-700/90');
+                        el.classList.add('bg-slate-800/80');
+                    }
+                }
+            });
         }
 
         function checkBusinessStatus() {
-            const { day, hours, minutes, currentTimeDec } = getWIBTime();
+            const { jakartaDate, day, currentTimeDec } = getWIBTime();
 
-            // Shift limits in decimal based on day
-            let s1Start = 7.0, s1End = 12.0;
-            let s2Start = 14.0, s2End = 17.0;
-            let s3Start = 19.0, s3End = 21.5; // 21:30
-            let hasSession3 = true;
-            let scheduleSummaryToday = "07:00-12:00 | 14:00-17:00 | 19:00-21:30 WIB";
+            // Hitung jadwal sholat otomatis hari ini untuk Matan Hilir Selatan
+            const prayerTimes = prayTimesInstance.getTimes(jakartaDate, PRAYER_COORDS, PRAYER_TZ);
+            updatePrayerWidget(prayerTimes, currentTimeDec, jakartaDate);
 
+            const dzuhurDec = timeStringToDec(prayerTimes.dhuhr);
+            const asharDec = timeStringToDec(prayerTimes.asr);
+            const asharEndDec = asharDec + (20 / 60); // 20 menit jeda sholat Ashar
+            const asharEndStr = addMinutes(prayerTimes.asr, 20);
+
+            // Batas Shift
+            const s1Start = 7.0;
+            // Sesi 1 berakhir pas adzan Dzuhur (khusus Jum'at tutup 10:30 untuk Shalat Jum'at)
+            const s1End = (day === 5) ? 10.5 : dzuhurDec;
+            const s2Start = 14.0;
+            const s2End = 17.0;
+            const s3Start = 19.0;
+            const s3End = (day === 5) ? 21.0 : 21.5; // 21:30
+            const hasSession3 = (day !== 1); // Senin malam tutup
+
+            let scheduleSummaryToday = `07:00 - Dzuhur (${prayerTimes.dhuhr}) | 14:00 - 17:00 | 19:00 - 21:30 WIB`;
             if (day === 5) {
-                // Hari Jum'at: Sesi Malam Tetap Buka (19:00 - 21:00 WIB)
-                s1End = 10.5; // 10:30
-                s3End = 21.0; // 21:00
-                hasSession3 = true; // Tetap buka 3 sesi di hari Jum'at
-                scheduleSummaryToday = "07:00-10:30 | 14:00-17:00 | 19:00-21:00 WIB (Jum'at Malam Buka)";
+                scheduleSummaryToday = `07:00 - 10:30 | 14:00 - 17:00 | 19:00 - 21:00 WIB (Jum'at Malam Buka)`;
             } else if (day === 1) {
-                // Hari Senin: Hanya sesi malam yang tutup
-                hasSession3 = false;
-                scheduleSummaryToday = "07:00-12:00 | 14:00-17:00 (Senin - Khusus Malam Tutup)";
+                scheduleSummaryToday = `07:00 - Dzuhur (${prayerTimes.dhuhr}) | 14:00 - 17:00 (Senin - Malam Tutup)`;
             }
 
             let isOpen = false;
+            let statusType = "closed"; // "open", "prayer_break", "closed", "midday_break"
             let currentSessionName = '';
             let nextInfo = '';
             let activeShiftCardId = null;
 
             if (currentTimeDec < s1Start) {
-                // Pagi hari sebelum buka
+                // Sebelum jam 07:00 pagi
                 isOpen = false;
+                statusType = "closed";
                 currentSessionName = "Belum Buka (Sesi Pagi)";
                 nextInfo = "Buka kembali hari ini pukul 07:00 WIB (Sesi 1)";
             } else if (currentTimeDec >= s1Start && currentTimeDec < s1End) {
+                // Sesi 1 Berlangsung
                 isOpen = true;
-                const endStr = day === 5 ? "10:30" : "12:00";
-                currentSessionName = `Sesi Pagi (07:00 - ${endStr})`;
-                nextInfo = `Buka sampai pukul ${endStr} WIB`;
+                statusType = "open";
                 activeShiftCardId = 'shift-card-1';
+                if (day === 5) {
+                    currentSessionName = "Sesi Pagi (07:00 - 10:30 WIB)";
+                    nextInfo = "Buka sampai pukul 10:30 WIB (Persiapan Shalat Jum'at)";
+                } else {
+                    currentSessionName = `Sesi Pagi (07:00 - Pas Adzan Dzuhur)`;
+                    nextInfo = `Buka sampai adzan Dzuhur pukul ${prayerTimes.dhuhr} WIB`;
+                }
             } else if (currentTimeDec >= s1End && currentTimeDec < s2Start) {
+                // Jeda Istirahat Siang / Sholat Dzuhur
                 isOpen = false;
-                currentSessionName = day === 5 ? "Istirahat & Persiapan Shalat Jum'at" : "Istirahat Siang";
-                nextInfo = "Buka kembali pukul 14:00 WIB (Sesi 2)";
+                statusType = "midday_break";
+                if (day === 5) {
+                    currentSessionName = "Istirahat & Ibadah Shalat Jum'at";
+                    nextInfo = "Sesi Pagi selesai. Buka kembali pukul 14:00 WIB (Sesi 2)";
+                } else {
+                    currentSessionName = "Istirahat Siang / Sholat Dzuhur";
+                    nextInfo = `Sesi Pagi selesai pas adzan Dzuhur. Buka kembali pukul 14:00 WIB (Sesi 2)`;
+                }
             } else if (currentTimeDec >= s2Start && currentTimeDec < s2End) {
-                isOpen = true;
-                currentSessionName = "Sesi Siang & Sore (14:00 - 17:00)";
-                nextInfo = "Buka sampai pukul 17:00 WIB";
+                // Sesi 2 Berlangsung (Cek apakah sedang jeda sholat Ashar 20 menit)
                 activeShiftCardId = 'shift-card-2';
+                if (currentTimeDec >= asharDec && currentTimeDec < asharEndDec) {
+                    isOpen = false;
+                    statusType = "prayer_break";
+                    currentSessionName = "Istirahat Sholat Ashar (15–20 Mnt)";
+                    nextInfo = `Sedang jeda sholat Ashar. Pelayanan buka kembali pukul ${asharEndStr} WIB`;
+                } else {
+                    isOpen = true;
+                    statusType = "open";
+                    currentSessionName = "Sesi Siang & Sore (14:00 - 17:00)";
+                    nextInfo = `Buka sampai 17:00 WIB (Jeda Ashar ${prayerTimes.asr} - ${asharEndStr} WIB)`;
+                }
             } else if (currentTimeDec >= s2End && currentTimeDec < s3Start) {
+                // Istirahat Sore (Maghrib & Isya)
                 isOpen = false;
+                statusType = "closed";
                 if (!hasSession3) {
                     currentSessionName = "Sesi Malam Tutup (Khusus Senin)";
                     nextInfo = "Buka kembali besok Selasa pukul 07:00 WIB";
                 } else {
-                    currentSessionName = "Istirahat Sore";
+                    currentSessionName = "Istirahat Sore & Ibadah Sholat Maghrib/Isya";
                     nextInfo = "Buka kembali pukul 19:00 WIB (Sesi 3)";
                 }
             } else if (hasSession3 && currentTimeDec >= s3Start && currentTimeDec < s3End) {
+                // Sesi 3 Berlangsung
                 isOpen = true;
-                const endStr = day === 5 ? "21:00" : "21:30";
+                statusType = "open";
+                activeShiftCardId = 'shift-card-3';
+                const endStr = (day === 5) ? "21:00" : "21:30";
                 currentSessionName = `Sesi Malam (19:00 - ${endStr})`;
                 nextInfo = `Buka sampai pukul ${endStr} WIB`;
-                activeShiftCardId = 'shift-card-3';
             } else {
+                // Malam setelah tutup
                 isOpen = false;
-                currentSessionName = (!hasSession3 && currentTimeDec >= s2End) ? "Sesi Malam Tutup (Khusus Senin)" : "Tutup";
+                statusType = "closed";
+                currentSessionName = (!hasSession3 && currentTimeDec >= s2End) ? "Sesi Malam Tutup (Khusus Senin)" : "Gerai Tutup";
                 nextInfo = "Buka kembali besok pagi pukul 07:00 WIB";
             }
 
-            // Update DOM Top Bar
+            // Update DOM Top Bar & Hero Card
             const dot = document.getElementById('status-indicator-dot');
             const badgeText = document.getElementById('status-badge-text');
             const detailText = document.getElementById('status-detail-text');
 
-            // Update Hero Card Badge & Schedule Info
             const cardBadge = document.getElementById('card-status-badge');
             const cardDesc = document.getElementById('card-status-desc');
             const cardScheduleInfo = document.getElementById('card-schedule-info');
@@ -1284,7 +1622,7 @@
                 cardScheduleInfo.textContent = scheduleSummaryToday;
             }
 
-            if (isOpen) {
+            if (statusType === "open") {
                 dot.className = "inline-block w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping";
                 badgeText.className = "font-semibold text-emerald-400";
                 badgeText.textContent = "🟢 SEDANG BUKA SEKARANG";
@@ -1293,14 +1631,23 @@
                 cardBadge.className = "px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30";
                 cardBadge.textContent = "SEKARANG BUKA";
                 cardDesc.textContent = `Aktif di ${currentSessionName} (${nextInfo})`;
+            } else if (statusType === "prayer_break") {
+                dot.className = "inline-block w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse";
+                badgeText.className = "font-semibold text-amber-300";
+                badgeText.textContent = "🟡 SEDANG ISTIRAHAT SHOLAT ASHAR";
+                detailText.textContent = `${currentSessionName} • Buka kembali pukul ${asharEndStr} WIB`;
+
+                cardBadge.className = "px-2.5 py-1 rounded-full text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30";
+                cardBadge.textContent = "JEDA SHOLAT ASHAR";
+                cardDesc.textContent = `Sedang menunaikan ibadah sholat Ashar (15–20 menit). Pelayanan dibuka kembali pukul ${asharEndStr} WIB.`;
             } else {
                 dot.className = "inline-block w-2.5 h-2.5 rounded-full bg-rose-400";
                 badgeText.className = "font-semibold text-rose-400";
-                badgeText.textContent = "🔴 SEDANG TUTUP / ISTIRAHAT";
+                badgeText.textContent = (statusType === "midday_break") ? "🔴 ISTIRAHAT SIANG / SHOLAT DZUHUR" : "🔴 SEDANG TUTUP / ISTIRAHAT";
                 detailText.textContent = `${currentSessionName} • ${nextInfo}`;
 
                 cardBadge.className = "px-2.5 py-1 rounded-full text-xs font-bold bg-rose-500/20 text-rose-400 border border-rose-500/30";
-                cardBadge.textContent = "SEDANG ISTIRAHAT / TUTUP";
+                cardBadge.textContent = (statusType === "midday_break") ? "ISTIRAHAT SIANG" : "SEDANG ISTIRAHAT / TUTUP";
                 cardDesc.textContent = `${nextInfo}. Pesanan WhatsApp tetap diterima.`;
             }
 
@@ -1308,7 +1655,7 @@
             ['shift-card-1', 'shift-card-2', 'shift-card-3'].forEach(id => {
                 const el = document.getElementById(id);
                 if (el) {
-                    if (id === activeShiftCardId) {
+                    if (id === activeShiftCardId && (statusType === "open" || statusType === "prayer_break")) {
                         el.classList.add('border-blue-500', 'bg-blue-50/50', 'ring-2', 'ring-blue-400/40');
                         el.classList.remove('border-slate-200');
                     } else {
