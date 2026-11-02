@@ -479,6 +479,93 @@
                 </div>
             </div>
 
+            <!-- Widget Prakiraan Cuaca BMKG (Kecamatan Matan Hilir Selatan) -->
+            <div id="weather-widget" class="mt-6 rounded-3xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 border border-slate-700/80 p-6 sm:p-7 text-white shadow-xl relative overflow-hidden">
+                <div class="absolute -top-16 -right-16 w-64 h-64 bg-amber-500/10 rounded-full blur-2xl pointer-events-none"></div>
+                
+                <div class="flex flex-col md:flex-row md:items-center justify-between pb-5 border-b border-slate-700/80 gap-3">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 to-orange-600 flex items-center justify-center text-white shadow-md">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 00-9.78 2.096A4.001 4.001 0 003 15z"/></svg>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <h3 class="font-extrabold text-base text-white">Prakiraan Cuaca Terkini (BMKG)</h3>
+                                <span id="weather-live-badge" class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">Live Data BMKG</span>
+                            </div>
+                            <p class="text-xs text-slate-300 mt-0.5">
+                                Wilayah Matan Hilir Selatan, Ketapang • <span id="weather-updated-time" class="font-medium text-amber-300">Sinkronisasi data BMKG...</span>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 text-xs">
+                        <a href="https://www.bmkg.go.id/cuaca/prakiraan-cuaca/61.04.12.2015" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-600 transition-colors inline-flex items-center gap-1.5 text-[11px]">
+                            <span>Rujukan: bmkg.go.id</span>
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Alert Box saat Cuaca Buruk / Hujan Petir (Dinamis) -->
+                <div id="weather-alert-box" class="hidden mt-4 p-4 rounded-2xl bg-rose-500/20 border border-rose-500/50 text-rose-200 text-xs flex items-start gap-3 transition-all animate-pulse">
+                    <div class="w-9 h-9 rounded-xl bg-rose-500/30 flex items-center justify-center text-rose-300 shrink-0 text-xl">
+                        ⚡
+                    </div>
+                    <div class="flex-1">
+                        <p class="font-bold text-rose-200 text-sm flex items-center gap-2">
+                            <span>PERINGATAN CUACA BURUK & PETIR</span>
+                            <span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold bg-rose-600 text-white uppercase tracking-wider">Gerai Tutup Sementara</span>
+                        </p>
+                        <p class="text-rose-200/90 mt-1 leading-relaxed">
+                            Wilayah Matan Hilir Selatan saat ini terpantau <strong id="weather-alert-desc" class="underline text-white">Hujan Petir</strong>. Demi keselamatan bersama serta proteksi mesin cetak bertegangan tinggi dari sambaran kilat/petir, operasional gerai fisik ditutup sementara waktu. <strong>Layanan konsultasi dan pemesanan online via WhatsApp tetap kami layani normal.</strong>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Konten Cuaca: Cuaca Saat Ini + Prakiraan Waktu Berikutnya -->
+                <div class="mt-5 grid grid-cols-1 lg:grid-cols-12 gap-4">
+                    <!-- Kartu Cuaca Sekarang (Col 5) -->
+                    <div class="lg:col-span-5 p-4 rounded-2xl bg-slate-800/80 border border-slate-700/80 flex items-center gap-4">
+                        <div id="weather-icon-container" class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-slate-700/50 flex items-center justify-center p-2 shrink-0 border border-slate-600/50 relative">
+                            <img id="weather-current-icon" src="" alt="Ikon Cuaca BMKG" class="w-full h-full object-contain hidden" />
+                            <span id="weather-icon-fallback" class="text-3xl sm:text-4xl">⛅</span>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-baseline gap-2">
+                                <span id="weather-current-temp" class="text-3xl sm:text-4xl font-black font-mono text-amber-300">--°C</span>
+                                <span class="text-xs text-slate-400">Suhu Udara</span>
+                            </div>
+                            <p id="weather-current-desc" class="text-sm font-bold text-white truncate mt-0.5">Memuat data cuaca...</p>
+                            <div class="flex flex-wrap items-center gap-3 text-[11px] text-slate-300 mt-2 font-mono">
+                                <span>💧 Lembap: <strong id="weather-current-hu" class="text-cyan-300">--%</strong></span>
+                                <span>💨 Angin: <strong id="weather-current-ws" class="text-cyan-300">-- km/j</strong> (<span id="weather-current-wd">--</span>)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Kartu Prakiraan Waktu Berikutnya (Col 7) -->
+                    <div class="lg:col-span-7 p-4 rounded-2xl bg-slate-800/80 border border-slate-700/80">
+                        <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-2.5 flex items-center justify-between">
+                            <span>Prakiraan Waktu Berikutnya</span>
+                            <span class="text-[10px] text-slate-400 font-normal">Data Resmi BMKG per 3 Jam</span>
+                        </p>
+                        <div id="weather-forecast-list" class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center">
+                            <!-- Diisi otomatis oleh JavaScript -->
+                            <div class="p-2.5 rounded-xl bg-slate-900/60 border border-slate-700/60 text-slate-400 text-xs">Memuat prakiraan...</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Catatan Tambahan Cuaca & Operasional -->
+                <div class="mt-4 pt-3 border-t border-slate-700/60 flex flex-wrap items-center justify-between text-xs text-slate-300 gap-2">
+                    <p class="flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-amber-400"></span>
+                        <span>Jika terjadi hujan lebat disertai petir, gerai fisik ditutup sementara demi keamanan perangkat elektronik.</span>
+                    </p>
+                    <span class="text-[11px] text-slate-400 font-mono">Kode Wilayah BMKG: 61.04.12.2015</span>
+                </div>
+            </div>
+
             <!-- Tabel Rangkuman Jadwal Mingguan -->
             <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 text-xs">
@@ -1505,6 +1592,190 @@
             });
         }
 
+        /**
+         * Prakiraan Cuaca BMKG (Matan Hilir Selatan, Ketapang)
+         * Endpoint: https://api.bmkg.go.id/publik/prakiraan-cuaca?adm4=61.04.12.2015
+         */
+        const BMKG_WEATHER_URL = 'https://api.bmkg.go.id/publik/prakiraan-cuaca?adm4=61.04.12.2015';
+        const BMKG_CACHE_KEY = 'amdev_bmkg_weather_6104122015';
+        const BMKG_CACHE_TTL = 15 * 60 * 1000; // Cache 15 menit
+        let currentWeatherData = null;
+        let fullWeatherForecast = null;
+
+        function getWeatherFallbackEmoji(desc) {
+            if (!desc) return '⛅';
+            const d = desc.toLowerCase();
+            if (d.includes('petir') || d.includes('kilat')) return '⛈️';
+            if (d.includes('lebat') || d.includes('deras')) return '🌧️';
+            if (d.includes('hujan')) return '🌦️';
+            if (d.includes('berawan tebal')) return '☁️';
+            if (d.includes('cerah berawan')) return '🌤️';
+            if (d.includes('berawan')) return '⛅';
+            if (d.includes('cerah')) return '☀️';
+            if (d.includes('kabut') || d.includes('asap') || d.includes('kabur')) return '🌫️';
+            return '⛅';
+        }
+
+        function isSevereWeather(desc) {
+            if (!desc) return false;
+            const d = desc.toLowerCase();
+            return d.includes('petir') || d.includes('kilat') || d.includes('lebat') || d.includes('badai');
+        }
+
+        function updateWeatherWidget(weatherData) {
+            if (!weatherData || !weatherData.data || !weatherData.data[0] || !weatherData.data[0].cuaca) return;
+            fullWeatherForecast = weatherData;
+            const cuacaList = weatherData.data[0].cuaca.flat();
+            if (cuacaList.length === 0) return;
+
+            cuacaList.sort((a, b) => new Date(a.datetime).getTime() - new Date(b.datetime).getTime());
+
+            const nowMs = Date.now();
+            let currentIdx = 0;
+            let minDiff = Infinity;
+            cuacaList.forEach((slot, idx) => {
+                const slotMs = new Date(slot.datetime).getTime();
+                const diff = Math.abs(slotMs - nowMs);
+                if (diff < minDiff) {
+                    minDiff = diff;
+                    currentIdx = idx;
+                }
+            });
+
+            const cur = cuacaList[currentIdx];
+            currentWeatherData = cur;
+
+            const updateTimeEl = document.getElementById('weather-updated-time');
+            if (updateTimeEl) {
+                const timeStr = cur.local_datetime ? cur.local_datetime.split(' ')[1].substring(0, 5) : '';
+                updateTimeEl.textContent = `Pukul ${timeStr} WIB (${cur.weather_desc})`;
+            }
+
+            const tempEl = document.getElementById('weather-current-temp');
+            if (tempEl) tempEl.textContent = `${cur.t}°C`;
+
+            const descEl = document.getElementById('weather-current-desc');
+            if (descEl) descEl.textContent = cur.weather_desc;
+
+            const huEl = document.getElementById('weather-current-hu');
+            if (huEl) huEl.textContent = `${cur.hu}%`;
+
+            const wsEl = document.getElementById('weather-current-ws');
+            if (wsEl) wsEl.textContent = `${cur.ws} km/j`;
+
+            const wdEl = document.getElementById('weather-current-wd');
+            if (wdEl) wdEl.textContent = cur.wd || 'SE';
+
+            const iconImg = document.getElementById('weather-current-icon');
+            const fallbackSpan = document.getElementById('weather-icon-fallback');
+            const fallbackEmoji = getWeatherFallbackEmoji(cur.weather_desc);
+
+            if (fallbackSpan) fallbackSpan.textContent = fallbackEmoji;
+
+            if (iconImg) {
+                if (cur.image) {
+                    iconImg.src = cur.image;
+                    iconImg.alt = cur.weather_desc;
+                    iconImg.classList.remove('hidden');
+                    if (fallbackSpan) fallbackSpan.classList.add('hidden');
+                    iconImg.onerror = function() {
+                        iconImg.classList.add('hidden');
+                        if (fallbackSpan) fallbackSpan.classList.remove('hidden');
+                    };
+                } else {
+                    iconImg.classList.add('hidden');
+                    if (fallbackSpan) fallbackSpan.classList.remove('hidden');
+                }
+            }
+
+            const alertBox = document.getElementById('weather-alert-box');
+            const alertDesc = document.getElementById('weather-alert-desc');
+            const liveBadge = document.getElementById('weather-live-badge');
+            const severe = isSevereWeather(cur.weather_desc);
+
+            if (severe) {
+                if (alertBox) alertBox.classList.remove('hidden');
+                if (alertDesc) alertDesc.textContent = cur.weather_desc;
+                if (liveBadge) {
+                    liveBadge.className = "inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-rose-500/20 text-rose-300 border border-rose-500/40";
+                    liveBadge.textContent = "⚠️ Cuaca Buruk / Petir";
+                }
+            } else {
+                if (alertBox) alertBox.classList.add('hidden');
+                if (liveBadge) {
+                    liveBadge.className = "inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30";
+                    liveBadge.textContent = "Live Data BMKG";
+                }
+            }
+
+            const forecastListEl = document.getElementById('weather-forecast-list');
+            if (forecastListEl) {
+                const nextSlots = [];
+                for (let i = currentIdx + 1; i <= currentIdx + 4 && i < cuacaList.length; i++) {
+                    nextSlots.push(cuacaList[i]);
+                }
+
+                if (nextSlots.length > 0) {
+                    forecastListEl.innerHTML = nextSlots.map(s => {
+                        const slotTime = s.local_datetime ? s.local_datetime.split(' ')[1].substring(0, 5) : '--:--';
+                        const slotDateParts = s.local_datetime ? s.local_datetime.split(' ')[0].split('-') : [];
+                        const slotDayMonth = slotDateParts.length >= 3 ? `${slotDateParts[2]}/${slotDateParts[1]}` : '';
+                        const isSlotSevere = isSevereWeather(s.weather_desc);
+                        const emoji = getWeatherFallbackEmoji(s.weather_desc);
+                        const borderClass = isSlotSevere ? 'border-rose-500/40 bg-rose-950/30' : 'border-slate-700/60 bg-slate-900/60';
+                        const textSevereClass = isSlotSevere ? 'text-rose-300 font-bold' : 'text-slate-300';
+
+                        return `
+                            <div class="p-2 rounded-xl ${borderClass} border transition-all">
+                                <span class="text-[10px] text-slate-400 block">${slotTime} <span class="text-[9px] text-slate-500">(${slotDayMonth})</span></span>
+                                <div class="my-1 flex items-center justify-center h-7">
+                                    ${s.image ? `<img src="${s.image}" alt="${s.weather_desc}" class="w-6 h-6 object-contain" onerror="this.outerHTML='<span class=\\'text-base\\'>${emoji}</span>'" />` : `<span class="text-base">${emoji}</span>`}
+                                </div>
+                                <span class="text-xs font-mono font-bold text-white block">${s.t}°C</span>
+                                <span class="text-[10px] ${textSevereClass} truncate block mt-0.5" title="${s.weather_desc}">${s.weather_desc}</span>
+                            </div>
+                        `;
+                    }).join('');
+                }
+            }
+        }
+
+        async function fetchBMKGWeather() {
+            try {
+                const cachedStr = localStorage.getItem(BMKG_CACHE_KEY);
+                if (cachedStr) {
+                    const cached = JSON.parse(cachedStr);
+                    if (Date.now() - cached.timestamp < BMKG_CACHE_TTL && cached.data) {
+                        updateWeatherWidget(cached.data);
+                        checkBusinessStatus();
+                        if (Date.now() - cached.timestamp < 5 * 60 * 1000) return;
+                    }
+                }
+            } catch (e) {}
+
+            try {
+                const res = await fetch(BMKG_WEATHER_URL);
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                const json = await res.json();
+                if (json && json.data) {
+                    updateWeatherWidget(json);
+                    checkBusinessStatus();
+                    try {
+                        localStorage.setItem(BMKG_CACHE_KEY, JSON.stringify({
+                            timestamp: Date.now(),
+                            data: json
+                        }));
+                    } catch (e) {}
+                }
+            } catch (err) {
+                console.warn('Gagal memuat prakiraan cuaca BMKG:', err.message);
+                const updateTimeEl = document.getElementById('weather-updated-time');
+                if (updateTimeEl && !currentWeatherData) {
+                    updateTimeEl.textContent = 'Koneksi offline ke BMKG (Cek jaringan)';
+                }
+            }
+        }
+
         function checkBusinessStatus() {
             const { jakartaDate, day, currentTimeDec } = getWIBTime();
 
@@ -1535,7 +1806,7 @@
             }
 
             let isOpen = false;
-            let statusType = "closed"; // "open", "prayer_break", "closed", "midday_break"
+            let statusType = "closed"; // "open", "prayer_break", "closed", "midday_break", "severe_weather"
             let currentSessionName = '';
             let nextInfo = '';
             let activeShiftCardId = null;
@@ -1610,6 +1881,20 @@
                 nextInfo = "Buka kembali besok pagi pukul 07:00 WIB";
             }
 
+            // Cek kondisi cuaca buruk (Hujan Petir / Hujan Lebat)
+            // Jika terjadi cuaca ekstrem dan sedang jam buka reguler, gerai ditutup sementara
+            const isWeatherSevere = currentWeatherData && isSevereWeather(currentWeatherData.weather_desc);
+            const isRegularShiftOpen = (currentTimeDec >= s1Start && currentTimeDec < s1End) ||
+                                       (currentTimeDec >= s2Start && currentTimeDec < s2End) ||
+                                       (hasSession3 && currentTimeDec >= s3Start && currentTimeDec < s3End);
+
+            if (isWeatherSevere && isRegularShiftOpen) {
+                isOpen = false;
+                statusType = "severe_weather";
+                currentSessionName = "Tutup Sementara (Cuaca Buruk / Hujan Petir)";
+                nextInfo = `BMKG: ${currentWeatherData.weather_desc} (${currentWeatherData.t}°C). Gerai fisik ditutup sementara demi proteksi mesin cetak dari petir. Konsultasi & pesanan online via WhatsApp tetap kami layani`;
+            }
+
             // Update DOM Top Bar & Hero Card
             const dot = document.getElementById('status-indicator-dot');
             const badgeText = document.getElementById('status-badge-text');
@@ -1622,7 +1907,16 @@
                 cardScheduleInfo.textContent = scheduleSummaryToday;
             }
 
-            if (statusType === "open") {
+            if (statusType === "severe_weather") {
+                dot.className = "inline-block w-2.5 h-2.5 rounded-full bg-rose-500 animate-ping";
+                badgeText.className = "font-semibold text-rose-400";
+                badgeText.textContent = "🔴 GERAI TUTUP SEMENTARA (CUACA BURUK / PETIR)";
+                detailText.textContent = `${currentSessionName} • ${currentWeatherData.weather_desc} (${currentWeatherData.t}°C) • Konsultasi WhatsApp tetap dilayani`;
+
+                cardBadge.className = "px-2.5 py-1 rounded-full text-xs font-bold bg-rose-500/20 text-rose-400 border border-rose-500/40";
+                cardBadge.textContent = "TUTUP CUACA BURUK";
+                cardDesc.textContent = `Gerai fisik ditutup sementara akibat cuaca ${currentWeatherData.weather_desc.toLowerCase()} & petir di Matan Hilir Selatan. Pesanan online via WhatsApp tetap kami proses.`;
+            } else if (statusType === "open") {
                 dot.className = "inline-block w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping";
                 badgeText.className = "font-semibold text-emerald-400";
                 badgeText.textContent = "🟢 SEDANG BUKA SEKARANG";
@@ -1655,11 +1949,19 @@
             ['shift-card-1', 'shift-card-2', 'shift-card-3'].forEach(id => {
                 const el = document.getElementById(id);
                 if (el) {
-                    if (id === activeShiftCardId && (statusType === "open" || statusType === "prayer_break")) {
-                        el.classList.add('border-blue-500', 'bg-blue-50/50', 'ring-2', 'ring-blue-400/40');
-                        el.classList.remove('border-slate-200');
+                    if (id === activeShiftCardId) {
+                        if (statusType === "severe_weather") {
+                            el.classList.add('border-rose-400', 'bg-rose-50/40', 'ring-2', 'ring-rose-400/40');
+                            el.classList.remove('border-slate-200', 'border-blue-500', 'bg-blue-50/50', 'ring-blue-400/40');
+                        } else if (statusType === "open" || statusType === "prayer_break") {
+                            el.classList.add('border-blue-500', 'bg-blue-50/50', 'ring-2', 'ring-blue-400/40');
+                            el.classList.remove('border-slate-200', 'border-rose-400', 'bg-rose-50/40', 'ring-rose-400/40');
+                        } else {
+                            el.classList.remove('border-blue-500', 'bg-blue-50/50', 'ring-2', 'ring-blue-400/40', 'border-rose-400', 'bg-rose-50/40', 'ring-rose-400/40');
+                            el.classList.add('border-slate-200');
+                        }
                     } else {
-                        el.classList.remove('border-blue-500', 'bg-blue-50/50', 'ring-2', 'ring-blue-400/40');
+                        el.classList.remove('border-blue-500', 'bg-blue-50/50', 'ring-2', 'ring-blue-400/40', 'border-rose-400', 'bg-rose-50/40', 'ring-rose-400/40');
                         el.classList.add('border-slate-200');
                     }
                 }
@@ -1669,6 +1971,10 @@
         // Initialize status and update every 60s
         checkBusinessStatus();
         setInterval(checkBusinessStatus, 60000);
+
+        // Ambil prakiraan cuaca BMKG dan perbarui setiap 15 menit
+        fetchBMKGWeather();
+        setInterval(fetchBMKGWeather, 15 * 60 * 1000);
 
         /**
          * Interactive Calculator Logic
