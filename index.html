@@ -531,14 +531,17 @@
                             <span id="weather-icon-fallback" class="text-3xl sm:text-4xl">⛅</span>
                         </div>
                         <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-2 mb-1">
+                                <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">Saat Ini</span>
+                                <span class="text-xs text-slate-400">Suhu Udara</span>
+                            </div>
                             <div class="flex items-baseline gap-2">
                                 <span id="weather-current-temp" class="text-3xl sm:text-4xl font-black font-mono text-amber-300">--°C</span>
-                                <span class="text-xs text-slate-400">Suhu Udara</span>
                             </div>
                             <p id="weather-current-desc" class="text-sm font-bold text-white truncate mt-0.5">Memuat data cuaca...</p>
                             <div class="flex flex-wrap items-center gap-3 text-[11px] text-slate-300 mt-2 font-mono">
                                 <span>💧 Lembap: <strong id="weather-current-hu" class="text-cyan-300">--%</strong></span>
-                                <span>💨 Angin: <strong id="weather-current-ws" class="text-cyan-300">-- km/j</strong> (<span id="weather-current-wd">--</span>)</span>
+                                <span>💨 Angin: <strong id="weather-current-ws" class="text-cyan-300">-- km/jam</strong> (<span id="weather-current-wd">--</span>)</span>
                             </div>
                         </div>
                     </div>
@@ -1616,6 +1619,20 @@
             return '⛅';
         }
 
+        function getArahAngin(wd) {
+            switch(wd) {
+                case 'E': return 'Timur';
+                case 'SE': return 'Tenggara';
+                case 'S': return 'Selatan';
+                case 'SW': return 'Barat Daya';
+                case 'W': return 'Barat';
+                case 'NW': return 'Barat Laut';
+                case 'N': return 'Utara';
+                case 'NE': return 'Timur Laut';
+                default: return wd || 'Tenang';
+            }
+        }
+
         function isSevereWeather(desc) {
             if (!desc) return false;
             const d = desc.toLowerCase();
@@ -1630,41 +1647,45 @@
 
             cuacaList.sort((a, b) => new Date(a.datetime).getTime() - new Date(b.datetime).getTime());
 
+            // Cari slot cuaca aktif saat ini: slot terakhir yang sudah berjalan (slotMs <= nowMs)
+            // Sesuai standar BMKG "SAAT INI", tidak melompat ke slot jam berikutnya sebelum waktunya tiba
             const nowMs = Date.now();
             let currentIdx = 0;
-            let minDiff = Infinity;
-            cuacaList.forEach((slot, idx) => {
-                const slotMs = new Date(slot.datetime).getTime();
-                const diff = Math.abs(slotMs - nowMs);
-                if (diff < minDiff) {
-                    minDiff = diff;
-                    currentIdx = idx;
+            for (let i = 0; i < cuacaList.length; i++) {
+                const slotMs = new Date(cuacaList[i].datetime).getTime();
+                if (slotMs <= nowMs) {
+                    currentIdx = i;
+                } else {
+                    break;
                 }
-            });
+            }
 
             const cur = cuacaList[currentIdx];
             currentWeatherData = cur;
 
+            const desa = (weatherData.lokasi && weatherData.lokasi.desa) ? weatherData.lokasi.desa : 'Sungai Besar';
+            const kecamatan = (weatherData.lokasi && weatherData.lokasi.kecamatan) ? weatherData.lokasi.kecamatan : 'Matan Hilir Selatan';
+
             const updateTimeEl = document.getElementById('weather-updated-time');
             if (updateTimeEl) {
                 const timeStr = cur.local_datetime ? cur.local_datetime.split(' ')[1].substring(0, 5) : '';
-                updateTimeEl.textContent = `Pukul ${timeStr} WIB (${cur.weather_desc})`;
+                updateTimeEl.textContent = `Saat Ini (Periode ${timeStr} WIB) • di ${desa}`;
             }
 
             const tempEl = document.getElementById('weather-current-temp');
             if (tempEl) tempEl.textContent = `${cur.t}°C`;
 
             const descEl = document.getElementById('weather-current-desc');
-            if (descEl) descEl.textContent = cur.weather_desc;
+            if (descEl) descEl.textContent = `${cur.weather_desc} di ${desa}`;
 
             const huEl = document.getElementById('weather-current-hu');
             if (huEl) huEl.textContent = `${cur.hu}%`;
 
             const wsEl = document.getElementById('weather-current-ws');
-            if (wsEl) wsEl.textContent = `${cur.ws} km/j`;
+            if (wsEl) wsEl.textContent = `${cur.ws} km/jam`;
 
             const wdEl = document.getElementById('weather-current-wd');
-            if (wdEl) wdEl.textContent = cur.wd || 'SE';
+            if (wdEl) wdEl.textContent = getArahAngin(cur.wd);
 
             const iconImg = document.getElementById('weather-current-icon');
             const fallbackSpan = document.getElementById('weather-icon-fallback');
@@ -1776,12 +1797,17 @@
             }
         }
 
-        function checkBusinessStatus() {
+                function checkBusinessStatus() {
             const { jakartaDate, day, currentTimeDec } = getWIBTime();
 
             // Hitung jadwal sholat otomatis hari ini untuk Matan Hilir Selatan
             const prayerTimes = prayTimesInstance.getTimes(jakartaDate, PRAYER_COORDS, PRAYER_TZ);
             updatePrayerWidget(prayerTimes, currentTimeDec, jakartaDate);
+
+            // Sinkronkan cuaca jam berjalan jika data ramalan sudah tersedia
+            if (fullWeatherForecast) {
+                updateWeatherWidget(fullWeatherForecast);
+            }
 
             const dzuhurDec = timeStringToDec(prayerTimes.dhuhr);
             const asharDec = timeStringToDec(prayerTimes.asr);
