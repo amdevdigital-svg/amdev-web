@@ -526,7 +526,8 @@
                 <div class="mt-5 grid grid-cols-1 lg:grid-cols-12 gap-4">
                     <!-- Kartu Cuaca Sekarang (Col 5) -->
                     <div class="lg:col-span-5 p-4 rounded-2xl bg-slate-800/80 border border-slate-700/80 flex items-center gap-4">
-                        <div id="weather-icon-container" class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-slate-700/50 flex items-center justify-center p-2 shrink-0 border border-slate-600/50 relative">
+                        <div id="weather-icon-container" class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-slate-700/50 flex items-center justify-center p-2 shrink-0 border border-slate-600/50 relative overflow-hidden">
+                            <div id="weather-svg-container" class="w-full h-full flex items-center justify-center hidden"></div>
                             <img id="weather-current-icon" src="" alt="Ikon Cuaca BMKG" class="w-full h-full object-contain hidden" />
                             <span id="weather-icon-fallback" class="text-3xl sm:text-4xl">⛅</span>
                         </div>
@@ -1597,13 +1598,56 @@
 
         /**
          * Prakiraan Cuaca BMKG (Matan Hilir Selatan, Ketapang)
-         * Endpoint: https://api.bmkg.go.id/publik/prakiraan-cuaca?adm4=61.04.12.2015
+         * - Halaman Resmi BMKG: https://www.bmkg.go.id/cuaca/prakiraan-cuaca/61.04.12.2015 (Data SAAT INI real-time)
+         * - API BMKG: https://api.bmkg.go.id/publik/prakiraan-cuaca?adm4=61.04.12.2015 (Data prakiraan per 3 jam)
          */
+        const BMKG_PAGE_URL = 'https://www.bmkg.go.id/cuaca/prakiraan-cuaca/61.04.12.2015';
         const BMKG_WEATHER_URL = 'https://api.bmkg.go.id/publik/prakiraan-cuaca?adm4=61.04.12.2015';
-        const BMKG_CACHE_KEY = 'amdev_bmkg_weather_6104122015';
-        const BMKG_CACHE_TTL = 15 * 60 * 1000; // Cache 15 menit
+        const BMKG_CACHE_KEY = 'amdev_bmkg_weather_6104122015_v3';
+        const BMKG_CACHE_TTL = 10 * 60 * 1000; // Cache 10 menit
         let currentWeatherData = null;
         let fullWeatherForecast = null;
+        let latestCombinedWeatherData = null;
+
+        function parseBMKGHtml(html) {
+            if (!html) return null;
+            const saatIniIdx = html.indexOf('Saat ini');
+            if (saatIniIdx === -1) return null;
+
+            const sliceAfter = html.substring(saatIniIdx, saatIniIdx + 8000);
+            const sliceBefore = html.substring(Math.max(0, saatIniIdx - 1500), saatIniIdx);
+
+            const updateMatch = sliceAfter.match(/Pemutakhiran:\s*([^<]+)/i);
+            const tempMatch = sliceAfter.match(/(\d+)\s*°C/);
+            const descMatch = sliceAfter.match(/<p[^>]*class="[^"]*text-black-primary[^"]*"[^>]*>([^<]+)<\/p>/i);
+            const desaMatch = sliceAfter.match(/di\s+([^<]+)<\/p>/i);
+            const huMatch = sliceAfter.match(/Kelembapan:\s*<span[^>]*class="[^"]*font-bold[^"]*"[^>]*>(\d+)%<\/span>/i);
+            const wsMatch = sliceAfter.match(/Kecepatan Angin:\s*<span[^>]*class="[^"]*font-bold[^"]*"[^>]*>([^<]+)<\/span>/i);
+            const wdMatch = sliceAfter.match(/Arah Angin dari:\s*<span[^>]*>[\s\S]*?<span[^>]*class="[^"]*font-bold[^"]*"[^>]*>([^<]+)<\/span>/i);
+
+            let svg = null;
+            const svgMatch = sliceBefore.match(/<div class="flex-shrink-0">\s*(<svg[\s\S]*?<\/svg>)\s*<\/div>/i);
+            if (svgMatch) {
+                svg = svgMatch[1]
+                    .replace(/class="[^"]*"/, 'class="w-full h-full object-contain"')
+                    .replace(/width="[^"]*"/g, '')
+                    .replace(/height="[^"]*"/g, '');
+            }
+
+            if (!tempMatch || !descMatch) return null;
+
+            return {
+                isLiveBMKG: true,
+                updateTime: updateMatch ? updateMatch[1].trim() : null,
+                t: parseInt(tempMatch[1], 10),
+                weather_desc: descMatch[1].trim(),
+                desa: desaMatch ? desaMatch[1].trim() : 'Sungai Besar',
+                hu: huMatch ? parseInt(huMatch[1], 10) : null,
+                ws: wsMatch ? wsMatch[1].trim() : null,
+                wd: wdMatch ? wdMatch[1].trim() : null,
+                svg: svg
+            };
+        }
 
         function getWeatherFallbackEmoji(desc) {
             if (!desc) return '⛅';
@@ -1633,43 +1677,75 @@
             }
         }
 
+        function formatArahAngin(wd) {
+            if (!wd) return 'Tenang';
+            if (wd.length <= 3) return getArahAngin(wd);
+            return wd;
+        }
+
+        function formatKecepatanAngin(ws) {
+            if (ws === null || ws === undefined || ws === '') return '-- km/jam';
+            const str = String(ws).trim();
+            if (str.toLowerCase().includes('km/jam') || str.toLowerCase().includes('km/j')) {
+                return str;
+            }
+            return `${str} km/jam`;
+        }
+
         function isSevereWeather(desc) {
             if (!desc) return false;
             const d = desc.toLowerCase();
             return d.includes('petir') || d.includes('kilat') || d.includes('lebat') || d.includes('badai');
         }
 
-        function updateWeatherWidget(weatherData) {
-            if (!weatherData || !weatherData.data || !weatherData.data[0] || !weatherData.data[0].cuaca) return;
-            fullWeatherForecast = weatherData;
-            const cuacaList = weatherData.data[0].cuaca.flat();
-            if (cuacaList.length === 0) return;
+        function renderWeatherWidget(combinedData) {
+            if (!combinedData) return;
+            latestCombinedWeatherData = combinedData;
 
-            cuacaList.sort((a, b) => new Date(a.datetime).getTime() - new Date(b.datetime).getTime());
-
-            // Cari slot cuaca aktif saat ini: slot terakhir yang sudah berjalan (slotMs <= nowMs)
-            // Sesuai standar BMKG "SAAT INI", tidak melompat ke slot jam berikutnya sebelum waktunya tiba
-            const nowMs = Date.now();
-            let currentIdx = 0;
-            for (let i = 0; i < cuacaList.length; i++) {
-                const slotMs = new Date(cuacaList[i].datetime).getTime();
-                if (slotMs <= nowMs) {
-                    currentIdx = i;
-                } else {
-                    break;
+            let cur = null;
+            if (combinedData.live) {
+                cur = combinedData.live;
+            } else if (combinedData.forecast && combinedData.forecast.data && combinedData.forecast.data[0]) {
+                const allSlots = combinedData.forecast.data[0].cuaca.flat();
+                allSlots.sort((a, b) => new Date(a.datetime).getTime() - new Date(b.datetime).getTime());
+                const nowMs = Date.now();
+                let closestIdx = 0;
+                let minDiff = Infinity;
+                for (let i = 0; i < allSlots.length; i++) {
+                    const diff = Math.abs(new Date(allSlots[i].datetime).getTime() - nowMs);
+                    if (diff < minDiff) {
+                        minDiff = diff;
+                        closestIdx = i;
+                    }
                 }
+                const slot = allSlots[closestIdx];
+                cur = {
+                    isLiveBMKG: false,
+                    updateTime: slot.local_datetime ? `Prakiraan ${slot.local_datetime.split(' ')[1].substring(0, 5)} WIB` : 'Prakiraan BMKG',
+                    t: slot.t,
+                    weather_desc: slot.weather_desc,
+                    desa: (combinedData.forecast.lokasi && combinedData.forecast.lokasi.desa) ? combinedData.forecast.lokasi.desa : 'Sungai Besar',
+                    hu: slot.hu,
+                    ws: slot.ws,
+                    wd: slot.wd,
+                    image: slot.image
+                };
             }
 
-            const cur = cuacaList[currentIdx];
+            if (!cur) return;
             currentWeatherData = cur;
 
-            const desa = (weatherData.lokasi && weatherData.lokasi.desa) ? weatherData.lokasi.desa : 'Sungai Besar';
-            const kecamatan = (weatherData.lokasi && weatherData.lokasi.kecamatan) ? weatherData.lokasi.kecamatan : 'Matan Hilir Selatan';
+            const desa = cur.desa || 'Sungai Besar';
 
             const updateTimeEl = document.getElementById('weather-updated-time');
             if (updateTimeEl) {
-                const timeStr = cur.local_datetime ? cur.local_datetime.split(' ')[1].substring(0, 5) : '';
-                updateTimeEl.textContent = `Saat Ini (Periode ${timeStr} WIB) • di ${desa}`;
+                if (cur.isLiveBMKG && cur.updateTime) {
+                    updateTimeEl.textContent = `Pemutakhiran: ${cur.updateTime} • di ${desa}`;
+                } else if (cur.updateTime) {
+                    updateTimeEl.textContent = `${cur.updateTime} • di ${desa}`;
+                } else {
+                    updateTimeEl.textContent = `Saat Ini • di ${desa}`;
+                }
             }
 
             const tempEl = document.getElementById('weather-current-temp');
@@ -1679,34 +1755,40 @@
             if (descEl) descEl.textContent = `${cur.weather_desc} di ${desa}`;
 
             const huEl = document.getElementById('weather-current-hu');
-            if (huEl) huEl.textContent = `${cur.hu}%`;
+            if (huEl) huEl.textContent = cur.hu !== null && cur.hu !== undefined ? `${cur.hu}%` : '--%';
 
             const wsEl = document.getElementById('weather-current-ws');
-            if (wsEl) wsEl.textContent = `${cur.ws} km/jam`;
+            if (wsEl) wsEl.textContent = formatKecepatanAngin(cur.ws);
 
             const wdEl = document.getElementById('weather-current-wd');
-            if (wdEl) wdEl.textContent = getArahAngin(cur.wd);
+            if (wdEl) wdEl.textContent = formatArahAngin(cur.wd);
 
+            const svgContainer = document.getElementById('weather-svg-container');
             const iconImg = document.getElementById('weather-current-icon');
             const fallbackSpan = document.getElementById('weather-icon-fallback');
             const fallbackEmoji = getWeatherFallbackEmoji(cur.weather_desc);
 
             if (fallbackSpan) fallbackSpan.textContent = fallbackEmoji;
 
-            if (iconImg) {
-                if (cur.image) {
-                    iconImg.src = cur.image;
-                    iconImg.alt = cur.weather_desc;
-                    iconImg.classList.remove('hidden');
-                    if (fallbackSpan) fallbackSpan.classList.add('hidden');
-                    iconImg.onerror = function() {
-                        iconImg.classList.add('hidden');
-                        if (fallbackSpan) fallbackSpan.classList.remove('hidden');
-                    };
-                } else {
+            if (cur.svg && svgContainer) {
+                svgContainer.innerHTML = cur.svg;
+                svgContainer.classList.remove('hidden');
+                if (iconImg) iconImg.classList.add('hidden');
+                if (fallbackSpan) fallbackSpan.classList.add('hidden');
+            } else if (cur.image && iconImg) {
+                if (svgContainer) svgContainer.classList.add('hidden');
+                iconImg.src = cur.image;
+                iconImg.alt = cur.weather_desc;
+                iconImg.classList.remove('hidden');
+                if (fallbackSpan) fallbackSpan.classList.add('hidden');
+                iconImg.onerror = function() {
                     iconImg.classList.add('hidden');
                     if (fallbackSpan) fallbackSpan.classList.remove('hidden');
-                }
+                };
+            } else {
+                if (svgContainer) svgContainer.classList.add('hidden');
+                if (iconImg) iconImg.classList.add('hidden');
+                if (fallbackSpan) fallbackSpan.classList.remove('hidden');
             }
 
             const alertBox = document.getElementById('weather-alert-box');
@@ -1725,19 +1807,26 @@
                 if (alertBox) alertBox.classList.add('hidden');
                 if (liveBadge) {
                     liveBadge.className = "inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30";
-                    liveBadge.textContent = "Live Data BMKG";
+                    liveBadge.textContent = cur.isLiveBMKG ? "Live BMKG" : "Prakiraan BMKG";
                 }
             }
 
             const forecastListEl = document.getElementById('weather-forecast-list');
-            if (forecastListEl) {
-                const nextSlots = [];
-                for (let i = currentIdx + 1; i <= currentIdx + 4 && i < cuacaList.length; i++) {
-                    nextSlots.push(cuacaList[i]);
+            if (forecastListEl && combinedData.forecast && combinedData.forecast.data && combinedData.forecast.data[0]) {
+                const allSlots = combinedData.forecast.data[0].cuaca.flat();
+                allSlots.sort((a, b) => new Date(a.datetime).getTime() - new Date(b.datetime).getTime());
+                
+                const nowMs = Date.now();
+                let futureSlots = allSlots.filter(s => new Date(s.datetime).getTime() > nowMs);
+                
+                if (futureSlots.length === 0) {
+                    futureSlots = allSlots.slice(-4);
+                } else if (futureSlots.length > 4) {
+                    futureSlots = futureSlots.slice(0, 4);
                 }
 
-                if (nextSlots.length > 0) {
-                    forecastListEl.innerHTML = nextSlots.map(s => {
+                if (futureSlots.length > 0) {
+                    forecastListEl.innerHTML = futureSlots.map(s => {
                         const slotTime = s.local_datetime ? s.local_datetime.split(' ')[1].substring(0, 5) : '--:--';
                         const slotDateParts = s.local_datetime ? s.local_datetime.split(' ')[0].split('-') : [];
                         const slotDayMonth = slotDateParts.length >= 3 ? `${slotDateParts[2]}/${slotDateParts[1]}` : '';
@@ -1761,35 +1850,65 @@
             }
         }
 
+        // Alias for backward compatibility
+        function updateWeatherWidget(weatherData) {
+            if (!weatherData) return;
+            if (weatherData.live !== undefined || weatherData.forecast !== undefined) {
+                renderWeatherWidget(weatherData);
+            } else {
+                renderWeatherWidget({ live: null, forecast: weatherData });
+            }
+        }
+
         async function fetchBMKGWeather() {
             try {
                 const cachedStr = localStorage.getItem(BMKG_CACHE_KEY);
                 if (cachedStr) {
                     const cached = JSON.parse(cachedStr);
                     if (Date.now() - cached.timestamp < BMKG_CACHE_TTL && cached.data) {
-                        updateWeatherWidget(cached.data);
+                        renderWeatherWidget(cached.data);
                         checkBusinessStatus();
-                        if (Date.now() - cached.timestamp < 5 * 60 * 1000) return;
+                        if (Date.now() - cached.timestamp < 3 * 60 * 1000) return;
                     }
                 }
             } catch (e) {}
 
+            let liveData = null;
+            let forecastData = null;
+
             try {
-                const res = await fetch(BMKG_WEATHER_URL);
-                if (!res.ok) throw new Error(`HTTP ${res.status}`);
-                const json = await res.json();
-                if (json && json.data) {
-                    updateWeatherWidget(json);
-                    checkBusinessStatus();
-                    try {
-                        localStorage.setItem(BMKG_CACHE_KEY, JSON.stringify({
-                            timestamp: Date.now(),
-                            data: json
-                        }));
-                    } catch (e) {}
+                const [liveRes, forecastRes] = await Promise.allSettled([
+                    fetch(BMKG_PAGE_URL, { cache: 'no-store' }),
+                    fetch(BMKG_WEATHER_URL, { cache: 'no-store' })
+                ]);
+
+                if (liveRes.status === 'fulfilled' && liveRes.value.ok) {
+                    const html = await liveRes.value.text();
+                    liveData = parseBMKGHtml(html);
+                }
+
+                if (forecastRes.status === 'fulfilled' && forecastRes.value.ok) {
+                    forecastData = await forecastRes.value.json();
                 }
             } catch (err) {
-                console.warn('Gagal memuat prakiraan cuaca BMKG:', err.message);
+                console.warn('Gagal memuat data cuaca BMKG:', err);
+            }
+
+            if (liveData || forecastData) {
+                const combinedData = {
+                    live: liveData,
+                    forecast: forecastData,
+                    fetchedAt: Date.now()
+                };
+                renderWeatherWidget(combinedData);
+                checkBusinessStatus();
+                try {
+                    localStorage.setItem(BMKG_CACHE_KEY, JSON.stringify({
+                        timestamp: Date.now(),
+                        data: combinedData
+                    }));
+                } catch (e) {}
+            } else {
                 const updateTimeEl = document.getElementById('weather-updated-time');
                 if (updateTimeEl && !currentWeatherData) {
                     updateTimeEl.textContent = 'Koneksi offline ke BMKG (Cek jaringan)';
@@ -1804,9 +1923,9 @@
             const prayerTimes = prayTimesInstance.getTimes(jakartaDate, PRAYER_COORDS, PRAYER_TZ);
             updatePrayerWidget(prayerTimes, currentTimeDec, jakartaDate);
 
-            // Sinkronkan cuaca jam berjalan jika data ramalan sudah tersedia
-            if (fullWeatherForecast) {
-                updateWeatherWidget(fullWeatherForecast);
+            // Sinkronkan cuaca jam berjalan jika data cuaca sudah tersedia
+            if (latestCombinedWeatherData) {
+                renderWeatherWidget(latestCombinedWeatherData);
             }
 
             const dzuhurDec = timeStringToDec(prayerTimes.dhuhr);
